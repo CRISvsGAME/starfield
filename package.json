@@ -1,0 +1,28 @@
+{
+    "name": "@crisvsgame/starfield",
+    "version": "0.0.1",
+    "description": "A lightweight starfield animation and rendering engine",
+    "keywords": [
+        "canvas",
+        "lightweight",
+        "starfield",
+        "animation",
+        "rendering",
+        "engine"
+    ],
+    "homepage": "https://github.com/CRISvsGAME/starfield#readme",
+    "bugs": {
+        "url": "https://github.com/CRISvsGAME/starfield/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CRISvsGAME/starfield.git"
+    },
+    "license": "MIT",
+    "author": "CRISvsGAME <cris@crisvsgame.com>",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    }
+}
