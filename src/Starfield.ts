@@ -25,4 +25,8 @@ export class Starfield {
         this.cvs.height = bcr.height * dpr;
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
+
+    public destroy = (): void => {
+        window.removeEventListener("resize", this.resize);
+    };
 }
