@@ -2,6 +2,9 @@ export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private dpr: number = window.devicePixelRatio || 1;
+    private rob: ResizeObserver;
+    private width: number = 0;
+    private height: number = 0;
 
     constructor(cvs: HTMLCanvasElement) {
         const ctx = cvs.getContext("2d");
@@ -10,10 +13,10 @@ export class Starfield {
 
         this.cvs = cvs;
         this.ctx = ctx;
+        this.rob = new ResizeObserver(this.resize);
 
+        this.rob.observe(this.cvs);
         this.resize();
-
-        window.addEventListener("resize", this.resize);
     }
 
     private resize = (): void => {
@@ -21,12 +24,16 @@ export class Starfield {
         const bcr = this.cvs.getBoundingClientRect();
 
         this.dpr = dpr;
-        this.cvs.width = bcr.width * dpr;
-        this.cvs.height = bcr.height * dpr;
+        this.width = bcr.width;
+        this.height = bcr.height;
+
+        this.cvs.width = this.width * dpr;
+        this.cvs.height = this.height * dpr;
+
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     public destroy = (): void => {
-        window.removeEventListener("resize", this.resize);
+        this.rob.disconnect();
     };
 }
