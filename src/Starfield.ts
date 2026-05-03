@@ -22,13 +22,17 @@ export class Starfield {
     private resize = (): void => {
         const dpr = window.devicePixelRatio || 1;
         const bcr = this.cvs.getBoundingClientRect();
+        const width = bcr.width;
+        const height = bcr.height;
+
+        if (this.dpr === dpr && this.width === width && this.height === height) return;
 
         this.dpr = dpr;
-        this.width = bcr.width;
-        this.height = bcr.height;
+        this.width = width;
+        this.height = height;
 
-        this.cvs.width = this.width * dpr;
-        this.cvs.height = this.height * dpr;
+        this.cvs.width = Math.round(width * dpr);
+        this.cvs.height = Math.round(height * dpr);
 
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
