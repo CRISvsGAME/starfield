@@ -37,6 +37,10 @@ export class Starfield {
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    private clear = (): void => {
+        this.ctx.clearRect(0, 0, this.width + 1, this.height + 1);
+    };
+
     public destroy = (): void => {
         this.rob.disconnect();
     };
