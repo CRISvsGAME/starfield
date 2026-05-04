@@ -41,6 +41,28 @@ export class Starfield {
         this.ctx.clearRect(0, 0, this.width + 1, this.height + 1);
     };
 
+    private drawStar = (): void => {
+        const ctx = this.ctx;
+        const centerX = 100;
+        const centerY = 100;
+        const outerRadius = 50;
+        const innerRadius = 25;
+        const points = 5;
+
+        ctx.beginPath();
+
+        for (let i = 0; i < points * 2; i++) {
+            const angle = -Math.PI / 2 + (i * Math.PI) / points;
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const x = centerX + radius * Math.cos(angle);
+            const y = centerY + radius * Math.sin(angle);
+            ctx.lineTo(x, y);
+        }
+
+        ctx.closePath();
+        ctx.fill();
+    };
+
     public destroy = (): void => {
         this.rob.disconnect();
     };
