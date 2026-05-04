@@ -1,3 +1,12 @@
+type StarOptions = {
+    ctx?: CanvasRenderingContext2D;
+    centerX?: number;
+    centerY?: number;
+    outerRadius?: number;
+    innerRadius?: number;
+    points?: number;
+};
+
 export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -41,13 +50,8 @@ export class Starfield {
         this.ctx.clearRect(0, 0, this.width + 1, this.height + 1);
     };
 
-    private drawStar = (): void => {
-        const ctx = this.ctx;
-        const centerX = 100;
-        const centerY = 100;
-        const outerRadius = 50;
-        const innerRadius = 25;
-        const points = 5;
+    private drawStar = (options: StarOptions = {}): void => {
+        const { ctx = this.ctx, centerX = 100, centerY = 100, outerRadius = 50, innerRadius = 25, points = 5 } = options;
 
         ctx.beginPath();
 
