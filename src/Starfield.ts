@@ -7,6 +7,12 @@ type StarOptions = {
     points?: number;
 };
 
+type SpriteMapOptions = {
+    sprites?: number;
+    spriteWidth?: number;
+    spriteHeight?: number;
+};
+
 export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -70,16 +76,24 @@ export class Starfield {
         ctx.fill();
     };
 
-    private createSpriteMap = (): void => {
+    private createSpriteMap = (options: SpriteMapOptions = {}): void => {
+        const { sprites = 1, spriteWidth = 100, spriteHeight = 100 } = options;
         const spriteMap = document.createElement("canvas");
         const ctx = spriteMap.getContext("2d");
 
         if (!ctx) throw new Error("Failed to get sprite context");
 
-        spriteMap.width = 100;
-        spriteMap.height = 100;
+        spriteMap.width = sprites * spriteWidth;
+        spriteMap.height = spriteHeight;
 
-        this.drawStar({ ctx });
+        for (let i = 0; i < sprites; i++) {
+            const centerX = i * spriteWidth + spriteWidth / 2;
+            const centerY = spriteHeight / 2;
+            const outerRadius = spriteWidth / 2;
+            const innerRadius = spriteWidth / 4;
+
+            this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius });
+        }
 
         this.spriteMap = spriteMap;
     };
