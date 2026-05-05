@@ -14,11 +14,14 @@ export class Starfield {
     private rob: ResizeObserver;
     private width: number = 0;
     private height: number = 0;
+    private spriteMap: HTMLCanvasElement | null = null;
 
     constructor(cvs: HTMLCanvasElement) {
         const ctx = cvs.getContext("2d");
 
-        if (!ctx) throw new Error("Failed to get 2D context");
+        if (!ctx) throw new Error("Failed to get canvas context");
+
+        this.createSpriteMap();
 
         this.cvs = cvs;
         this.ctx = ctx;
@@ -51,7 +54,7 @@ export class Starfield {
     };
 
     private drawStar = (options: StarOptions = {}): void => {
-        const { ctx = this.ctx, centerX = 100, centerY = 100, outerRadius = 50, innerRadius = 25, points = 5 } = options;
+        const { ctx = this.ctx, centerX = 50, centerY = 50, outerRadius = 50, innerRadius = 25, points = 5 } = options;
 
         ctx.beginPath();
 
@@ -65,6 +68,20 @@ export class Starfield {
 
         ctx.closePath();
         ctx.fill();
+    };
+
+    private createSpriteMap = (): void => {
+        const spriteMap = document.createElement("canvas");
+        const ctx = spriteMap.getContext("2d");
+
+        if (!ctx) throw new Error("Failed to get sprite context");
+
+        spriteMap.width = 100;
+        spriteMap.height = 100;
+
+        this.drawStar({ ctx });
+
+        this.spriteMap = spriteMap;
     };
 
     public destroy = (): void => {
