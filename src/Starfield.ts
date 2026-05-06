@@ -11,6 +11,9 @@ type SpriteMapOptions = {
     sprites?: number;
     spriteWidth?: number;
     spriteHeight?: number;
+    minOuterRadius?: number;
+    maxOuterRadius?: number;
+    innerRadiusRatio?: number;
 };
 
 export class Starfield {
@@ -77,7 +80,7 @@ export class Starfield {
     };
 
     private createSpriteMap = (options: SpriteMapOptions = {}): void => {
-        const { sprites = 1, spriteWidth = 100, spriteHeight = 100 } = options;
+        const { sprites = 1, spriteWidth = 100, spriteHeight = 100, minOuterRadius = 50, maxOuterRadius = 50, innerRadiusRatio = 0.5 } = options;
         const spriteMap = document.createElement("canvas");
         const ctx = spriteMap.getContext("2d");
 
@@ -87,10 +90,11 @@ export class Starfield {
         spriteMap.height = spriteHeight;
 
         for (let i = 0; i < sprites; i++) {
+            const t = sprites === 1 ? 0 : i / (sprites - 1);
             const centerX = i * spriteWidth + spriteWidth / 2;
             const centerY = spriteHeight / 2;
-            const outerRadius = spriteWidth / 2;
-            const innerRadius = spriteWidth / 4;
+            const outerRadius = minOuterRadius + t * (maxOuterRadius - minOuterRadius);
+            const innerRadius = outerRadius * innerRadiusRatio;
 
             this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius });
         }
