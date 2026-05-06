@@ -19,7 +19,7 @@ type SpriteMapOptions = {
 export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private dpr: number = window.devicePixelRatio || 1;
+    private dpr: number = 0;
     private rob: ResizeObserver;
     private width: number = 0;
     private height: number = 0;
@@ -29,8 +29,6 @@ export class Starfield {
         const ctx = cvs.getContext("2d");
 
         if (!ctx) throw new Error("Failed to get canvas context");
-
-        this.createSpriteMap();
 
         this.cvs = cvs;
         this.ctx = ctx;
@@ -45,8 +43,10 @@ export class Starfield {
         const bcr = this.cvs.getBoundingClientRect();
         const width = bcr.width;
         const height = bcr.height;
+        const dprChanged = this.dpr !== dpr;
+        const sizeChanged = this.width !== width || this.height !== height;
 
-        if (this.dpr === dpr && this.width === width && this.height === height) return;
+        if (!dprChanged && !sizeChanged) return;
 
         this.dpr = dpr;
         this.width = width;
@@ -56,6 +56,10 @@ export class Starfield {
         this.cvs.height = Math.round(height * dpr);
 
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        if (dprChanged) {
+            this.createSpriteMap();
+        }
     };
 
     private clear = (): void => {
@@ -86,8 +90,10 @@ export class Starfield {
 
         if (!ctx) throw new Error("Failed to get sprite context");
 
-        spriteMap.width = sprites * spriteWidth;
-        spriteMap.height = spriteHeight;
+        spriteMap.width = Math.round(sprites * spriteWidth * this.dpr);
+        spriteMap.height = Math.round(spriteHeight * this.dpr);
+
+        ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
         for (let i = 0; i < sprites; i++) {
             const t = sprites === 1 ? 0 : i / (sprites - 1);
