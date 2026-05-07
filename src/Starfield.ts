@@ -16,6 +16,13 @@ type SpriteMapOptions = {
     innerRadiusRatio?: number;
 };
 
+type SpriteRect = {
+    sx: number;
+    sy: number;
+    sw: number;
+    sh: number;
+};
+
 export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -24,6 +31,7 @@ export class Starfield {
     private width: number = 0;
     private height: number = 0;
     private spriteMap: HTMLCanvasElement | null = null;
+    private spriteRects: SpriteRect[] = [];
 
     constructor(cvs: HTMLCanvasElement) {
         const ctx = cvs.getContext("2d");
@@ -95,6 +103,8 @@ export class Starfield {
 
         ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
+        this.spriteRects = [];
+
         for (let i = 0; i < sprites; i++) {
             const t = sprites === 1 ? 0 : i / (sprites - 1);
             const centerX = i * spriteWidth + spriteWidth / 2;
@@ -103,6 +113,13 @@ export class Starfield {
             const innerRadius = outerRadius * innerRadiusRatio;
 
             this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius });
+
+            this.spriteRects[i] = {
+                sx: Math.round(i * spriteWidth * this.dpr),
+                sy: 0,
+                sw: Math.round(spriteWidth * this.dpr),
+                sh: Math.round(spriteHeight * this.dpr),
+            };
         }
 
         this.spriteMap = spriteMap;
