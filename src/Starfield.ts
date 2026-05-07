@@ -23,6 +23,15 @@ type SpriteRect = {
     sh: number;
 };
 
+type Star = {
+    spriteIndex: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    speed: number;
+};
+
 export class Starfield {
     private cvs: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -32,6 +41,7 @@ export class Starfield {
     private height: number = 0;
     private spriteMap: HTMLCanvasElement | null = null;
     private spriteRects: SpriteRect[] = [];
+    private stars: Star[] = [];
 
     constructor(cvs: HTMLCanvasElement) {
         const ctx = cvs.getContext("2d");
@@ -92,7 +102,7 @@ export class Starfield {
     };
 
     private createSpriteMap = (options: SpriteMapOptions = {}): void => {
-        const { sprites = 1, spriteWidth = 100, spriteHeight = 100, minOuterRadius = 50, maxOuterRadius = 50, innerRadiusRatio = 0.5 } = options;
+        const { sprites = 8, spriteWidth = 32, spriteHeight = 32, minOuterRadius = 4, maxOuterRadius = 8, innerRadiusRatio = 0.5 } = options;
         const spriteMap = document.createElement("canvas");
         const ctx = spriteMap.getContext("2d");
 
@@ -123,6 +133,17 @@ export class Starfield {
         }
 
         this.spriteMap = spriteMap;
+    };
+
+    private drawSprite = (star: Star): void => {
+        if (!this.spriteMap) return;
+
+        const { spriteIndex, x, y, width, height } = star;
+        const spriteRect = this.spriteRects[spriteIndex];
+
+        if (!spriteRect) return;
+
+        this.ctx.drawImage(this.spriteMap, spriteRect.sx, spriteRect.sy, spriteRect.sw, spriteRect.sh, x, y, width, height);
     };
 
     public destroy = (): void => {
