@@ -8,6 +8,11 @@ type StarfieldOptions = {
     innerRadiusRatio: number;
     points: number;
     color: string;
+    minAlpha: number;
+    maxAlpha: number;
+    shadowColor: string;
+    minShadowBlur: number;
+    maxShadowBlur: number;
 };
 
 type StarOptions = {
@@ -16,6 +21,10 @@ type StarOptions = {
     centerY: number;
     outerRadius: number;
     innerRadius: number;
+    color: string;
+    alpha: number;
+    shadowColor: string;
+    shadowBlur: number;
 };
 
 type Sprite = {
@@ -45,6 +54,11 @@ const defaultStarfieldOptions: StarfieldOptions = {
     innerRadiusRatio: 0.5,
     points: 5,
     color: "#fff",
+    minAlpha: 0.1,
+    maxAlpha: 1,
+    shadowColor: "#fff",
+    minShadowBlur: 0,
+    maxShadowBlur: 8,
 };
 
 export class Starfield {
@@ -123,7 +137,16 @@ export class Starfield {
 
     private drawStar = (options: StarOptions): void => {
         const ctx = options.ctx ?? this.mainCtx;
-        const { centerX, centerY, outerRadius, innerRadius } = options;
+        const { centerX, centerY, outerRadius, innerRadius, color, alpha, shadowColor, shadowBlur } = options;
+
+        ctx.save();
+
+        ctx.fillStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.shadowColor = shadowColor;
+        ctx.shadowBlur = shadowBlur;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
         ctx.beginPath();
 
@@ -137,6 +160,7 @@ export class Starfield {
 
         ctx.closePath();
         ctx.fill();
+        ctx.restore();
     };
 
     private createSpriteMap = (): void => {
@@ -152,7 +176,6 @@ export class Starfield {
         cvs.height = Math.round(o.spriteHeight * this.dpr);
 
         ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-        ctx.fillStyle = o.color;
 
         for (let i = 0; i < o.sprites; i++) {
             const t = o.sprites === 1 ? 0 : i / (o.sprites - 1);
@@ -160,8 +183,12 @@ export class Starfield {
             const centerY = o.spriteHeight / 2;
             const outerRadius = o.minOuterRadius + t * (o.maxOuterRadius - o.minOuterRadius);
             const innerRadius = outerRadius * o.innerRadiusRatio;
+            const color = o.color;
+            const alpha = o.minAlpha + t * (o.maxAlpha - o.minAlpha);
+            const shadowColor = o.shadowColor;
+            const shadowBlur = o.minShadowBlur + t * (o.maxShadowBlur - o.minShadowBlur);
 
-            this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius });
+            this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius, color, alpha, shadowColor, shadowBlur });
 
             sprites[i] = {
                 sx: Math.round(i * o.spriteWidth * this.dpr),
