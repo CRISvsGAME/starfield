@@ -88,6 +88,10 @@ export class Starfield {
         if (!Number.isFinite(o.minOuterRadius)) throw new Error("Min outer radius must be a number");
         if (!Number.isFinite(o.maxOuterRadius)) throw new Error("Max outer radius must be a number");
         if (!Number.isFinite(o.innerRadiusRatio)) throw new Error("Inner radius ratio must be a number");
+        if (!Number.isFinite(o.minAlpha)) throw new Error("Min alpha must be a number");
+        if (!Number.isFinite(o.maxAlpha)) throw new Error("Max alpha must be a number");
+        if (!Number.isFinite(o.minShadowBlur)) throw new Error("Min shadow blur must be a number");
+        if (!Number.isFinite(o.maxShadowBlur)) throw new Error("Max shadow blur must be a number");
         if (o.stars < 1) throw new Error("Stars must be greater than 0");
         if (o.sprites < 1) throw new Error("Sprites must be greater than 0");
         if (o.spriteWidth < 1) throw new Error("Sprite width must be greater than 0");
@@ -97,6 +101,12 @@ export class Starfield {
         if (o.minOuterRadius > o.maxOuterRadius) throw new Error("Min outer radius must be less than or equal to max outer radius");
         if (o.innerRadiusRatio < 0 || o.innerRadiusRatio > 1) throw new Error("Inner radius ratio must be between 0 and 1");
         if (o.points < 3) throw new Error("Points must be greater than or equal to 3");
+        if (o.minAlpha < 0 || o.minAlpha > 1) throw new Error("Min alpha must be between 0 and 1");
+        if (o.maxAlpha < 0 || o.maxAlpha > 1) throw new Error("Max alpha must be between 0 and 1");
+        if (o.minAlpha > o.maxAlpha) throw new Error("Min alpha must be less than or equal to max alpha");
+        if (o.minShadowBlur < 0) throw new Error("Min shadow blur must be greater than or equal to 0");
+        if (o.maxShadowBlur < 0) throw new Error("Max shadow blur must be greater than or equal to 0");
+        if (o.minShadowBlur > o.maxShadowBlur) throw new Error("Min shadow blur must be less than or equal to max shadow blur");
 
         this.options = o;
         this.mainCvs = cvs;
