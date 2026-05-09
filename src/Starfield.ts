@@ -65,7 +65,8 @@ export class Starfield {
     private options: StarfieldOptions;
     private mainCvs: HTMLCanvasElement;
     private mainCtx: CanvasRenderingContext2D;
-    private spriteCvs: HTMLCanvasElement | null = null;
+    private spriteCvs: HTMLCanvasElement;
+    private spriteCtx: CanvasRenderingContext2D;
     private rob: ResizeObserver;
     private dpr: number = 0;
     private width: number = 0;
@@ -74,9 +75,12 @@ export class Starfield {
     private stars: Star[] = [];
 
     constructor(cvs: HTMLCanvasElement, options: Partial<StarfieldOptions> = {}) {
-        const ctx = cvs.getContext("2d");
+        const mainCtx = cvs.getContext("2d");
+        const spriteCvs = document.createElement("canvas");
+        const spriteCtx = spriteCvs.getContext("2d");
 
-        if (!ctx) throw new Error("Failed to get canvas context");
+        if (!mainCtx) throw new Error("Failed to get canvas context");
+        if (!spriteCtx) throw new Error("Failed to get sprite context");
 
         const o = { ...defaultStarfieldOptions, ...options };
 
@@ -110,7 +114,9 @@ export class Starfield {
 
         this.options = o;
         this.mainCvs = cvs;
-        this.mainCtx = ctx;
+        this.mainCtx = mainCtx;
+        this.spriteCvs = spriteCvs;
+        this.spriteCtx = spriteCtx;
         this.rob = new ResizeObserver(this.resize);
 
         this.rob.observe(this.mainCvs);
@@ -118,8 +124,9 @@ export class Starfield {
     }
 
     private resize = (): void => {
+        const mainCvs = this.mainCvs;
         const dpr = window.devicePixelRatio || 1;
-        const bcr = this.mainCvs.getBoundingClientRect();
+        const bcr = mainCvs.getBoundingClientRect();
         const width = bcr.width;
         const height = bcr.height;
         const dprChanged = this.dpr !== dpr;
@@ -131,8 +138,8 @@ export class Starfield {
         this.width = width;
         this.height = height;
 
-        this.mainCvs.width = Math.round(width * dpr);
-        this.mainCvs.height = Math.round(height * dpr);
+        mainCvs.width = Math.round(width * dpr);
+        mainCvs.height = Math.round(height * dpr);
 
         this.mainCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
@@ -146,8 +153,12 @@ export class Starfield {
     };
 
     private drawStar = (options: StarOptions): void => {
-        const ctx = options.ctx ?? this.mainCtx;
         const { centerX, centerY, outerRadius, innerRadius, color, alpha, shadowColor, shadowBlur } = options;
+        const ctx = options.ctx ?? this.mainCtx;
+        const points = this.options.points;
+        const max = points * 2;
+        const step = Math.PI / points;
+        const startAngle = -Math.PI / 2;
 
         ctx.save();
 
@@ -160,8 +171,8 @@ export class Starfield {
 
         ctx.beginPath();
 
-        for (let i = 0; i < this.options.points * 2; i++) {
-            const angle = -Math.PI / 2 + (i * Math.PI) / this.options.points;
+        for (let i = 0; i < max; i++) {
+            const angle = startAngle + i * step;
             const radius = i % 2 === 0 ? outerRadius : innerRadius;
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
@@ -174,51 +185,51 @@ export class Starfield {
     };
 
     private createSpriteMap = (): void => {
-        const cvs = document.createElement("canvas");
-        const ctx = cvs.getContext("2d");
+        const { sprites, spriteWidth, spriteHeight, minOuterRadius, maxOuterRadius, innerRadiusRatio, color, minAlpha, maxAlpha, shadowColor, minShadowBlur, maxShadowBlur } = this.options;
+        const spriteCvs = this.spriteCvs;
+        const spriteCtx = this.spriteCtx;
+        const dpr = this.dpr;
+        const spritesMinusOne = sprites - 1;
+        const tStep = sprites === 1 ? 0 : 1 / spritesMinusOne;
+        const halfSpriteWidth = spriteWidth / 2;
+        const halfSpriteHeight = spriteHeight / 2;
+        const radiusRange = maxOuterRadius - minOuterRadius;
+        const alphaRange = maxAlpha - minAlpha;
+        const blurRange = maxShadowBlur - minShadowBlur;
+        const spriteWidthDpr = Math.round(spriteWidth * dpr);
+        const spriteHeightDpr = Math.round(spriteHeight * dpr);
+        const spritesList: Sprite[] = [];
 
-        if (!ctx) throw new Error("Failed to get sprite context");
+        spriteCvs.width = spriteWidthDpr * sprites;
+        spriteCvs.height = spriteHeightDpr;
 
-        const o = this.options;
-        const sprites: Sprite[] = [];
+        spriteCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        cvs.width = Math.round(o.spriteWidth * o.sprites * this.dpr);
-        cvs.height = Math.round(o.spriteHeight * this.dpr);
+        for (let i = 0; i < sprites; i++) {
+            const t = i * tStep;
+            const centerX = i * spriteWidth + halfSpriteWidth;
+            const centerY = halfSpriteHeight;
+            const outerRadius = minOuterRadius + t * radiusRange;
+            const innerRadius = outerRadius * innerRadiusRatio;
+            const alpha = minAlpha + t * alphaRange;
+            const shadowBlur = minShadowBlur + t * blurRange;
 
-        ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+            this.drawStar({ ctx: spriteCtx, centerX, centerY, outerRadius, innerRadius, color, alpha, shadowColor, shadowBlur });
 
-        for (let i = 0; i < o.sprites; i++) {
-            const t = o.sprites === 1 ? 0 : i / (o.sprites - 1);
-            const centerX = i * o.spriteWidth + o.spriteWidth / 2;
-            const centerY = o.spriteHeight / 2;
-            const outerRadius = o.minOuterRadius + t * (o.maxOuterRadius - o.minOuterRadius);
-            const innerRadius = outerRadius * o.innerRadiusRatio;
-            const color = o.color;
-            const alpha = o.minAlpha + t * (o.maxAlpha - o.minAlpha);
-            const shadowColor = o.shadowColor;
-            const shadowBlur = o.minShadowBlur + t * (o.maxShadowBlur - o.minShadowBlur);
-
-            this.drawStar({ ctx, centerX, centerY, outerRadius, innerRadius, color, alpha, shadowColor, shadowBlur });
-
-            sprites[i] = {
-                sx: Math.round(i * o.spriteWidth * this.dpr),
+            spritesList[i] = {
+                sx: i * spriteWidthDpr,
                 sy: 0,
-                sw: Math.round(o.spriteWidth * this.dpr),
-                sh: Math.round(o.spriteHeight * this.dpr),
+                sw: spriteWidthDpr,
+                sh: spriteHeightDpr,
             };
         }
 
-        this.spriteCvs = cvs;
-        this.sprites = sprites;
+        this.sprites = spritesList;
     };
 
     private drawSprite = (star: Star): void => {
-        if (!this.spriteCvs) return;
-
         const { spriteIndex, x, y, width, height } = star;
-        const s = this.sprites[spriteIndex];
-
-        if (!s) return;
+        const s = this.sprites[spriteIndex]!;
 
         this.mainCtx.drawImage(this.spriteCvs, s.sx, s.sy, s.sw, s.sh, x, y, width, height);
     };
