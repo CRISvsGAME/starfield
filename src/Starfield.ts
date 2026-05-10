@@ -13,6 +13,10 @@ type StarfieldOptions = {
     shadowColor: string;
     minShadowBlur: number;
     maxShadowBlur: number;
+    densityDecay: number;
+    minSpeed: number;
+    maxSpeed: number;
+    speedVariation: number;
 };
 
 type StarOptions = {
@@ -59,6 +63,10 @@ const defaultStarfieldOptions: StarfieldOptions = {
     shadowColor: "#fff",
     minShadowBlur: 0,
     maxShadowBlur: 8,
+    densityDecay: 1.5,
+    minSpeed: 0.1,
+    maxSpeed: 1,
+    speedVariation: 1,
 };
 
 export class Starfield {
@@ -225,6 +233,49 @@ export class Starfield {
         }
 
         this.sprites = spritesList;
+    };
+
+    private createStars = (): void => {
+        const { stars, sprites, spriteWidth, spriteHeight, densityDecay, minSpeed, maxSpeed, speedVariation } = this.options;
+        const width = this.width;
+        const height = this.height;
+        const spritesMinusOne = sprites - 1;
+        const tStep = sprites === 1 ? 0 : 1 / spritesMinusOne;
+        const speedRange = maxSpeed - minSpeed;
+        const doublePi = 2 * Math.PI;
+        const starsList: Star[] = [];
+        const weights: number[] = [];
+
+        let totalWeight = 0;
+
+        for (let i = 0; i < sprites; i++) {
+            const weight = densityDecay ** (spritesMinusOne - i);
+            weights[i] = weight;
+            totalWeight += weight;
+        }
+
+        for (let spriteIndex = 0; spriteIndex < sprites; spriteIndex++) {
+            const weight = weights[spriteIndex]!;
+            const count = Math.ceil((weight / totalWeight) * stars);
+            const t = spriteIndex * tStep;
+            const baseSpeed = minSpeed + t * speedRange;
+            const speedMin = baseSpeed * (1 - speedVariation);
+            const speedMax = baseSpeed * (1 + speedVariation);
+            const speedRangeForIndex = speedMax - speedMin;
+
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const angle = Math.random() * doublePi;
+                const speed = speedMin + Math.random() * speedRangeForIndex;
+                const vx = speed * Math.cos(angle);
+                const vy = speed * Math.sin(angle);
+
+                starsList.push({ spriteIndex, x, y, width: spriteWidth, height: spriteHeight, vx, vy });
+            }
+        }
+
+        this.stars = starsList;
     };
 
     private drawSprite = (star: Star): void => {
