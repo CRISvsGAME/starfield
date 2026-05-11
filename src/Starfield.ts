@@ -132,6 +132,7 @@ export class Starfield {
         }
 
         this.createStars();
+        this.renderStars();
     };
 
     private clear = (): void => {
@@ -258,11 +259,33 @@ export class Starfield {
         this.stars = starsList;
     };
 
-    private drawSprite = (star: Star): void => {
-        const { spriteIndex, x, y, width, height } = star;
-        const s = this.sprites[spriteIndex]!;
+    private renderStars = (): void => {
+        const mainCtx = this.mainCtx;
+        const spriteCvs = this.spriteCvs;
+        const stars = this.stars;
+        const sprites = this.sprites;
+        const canvasWidth = this.width;
+        const canvasHeight = this.height;
+        const length = stars.length;
 
-        this.mainCtx.drawImage(this.spriteCvs, s.sx, s.sy, s.sw, s.sh, x, y, width, height);
+        for (let i = 0; i < length; i++) {
+            const star = stars[i]!;
+            const { spriteIndex, x, y, width, height, vx, vy } = star;
+            const sprite = sprites[spriteIndex]!;
+
+            mainCtx.drawImage(spriteCvs, sprite.sx, sprite.sy, sprite.sw, sprite.sh, x, y, width, height);
+
+            let starX = x + vx;
+            let starY = y + vy;
+
+            if (starX < -width) starX = canvasWidth;
+            else if (starX > canvasWidth) starX = -width;
+            if (starY < -height) starY = canvasHeight;
+            else if (starY > canvasHeight) starY = -height;
+
+            star.x = starX;
+            star.y = starY;
+        }
     };
 
     public destroy = (): void => {
