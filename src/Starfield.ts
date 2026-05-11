@@ -217,6 +217,8 @@ export class Starfield {
         const { stars, sprites, spriteWidth, spriteHeight, densityDecay, minSpeed, maxSpeed, speedVariation } = this.options;
         const width = this.width;
         const height = this.height;
+        const area = width * height;
+        const totalStars = (stars * area) / 1000000;
         const spritesMinusOne = sprites - 1;
         const tStep = sprites === 1 ? 0 : 1 / spritesMinusOne;
         const speedRange = maxSpeed - minSpeed;
@@ -234,7 +236,7 @@ export class Starfield {
 
         for (let spriteIndex = 0; spriteIndex < sprites; spriteIndex++) {
             const weight = weights[spriteIndex]!;
-            const count = Math.ceil((weight / totalWeight) * stars);
+            const count = Math.ceil((weight / totalWeight) * totalStars);
             const t = spriteIndex * tStep;
             const baseSpeed = minSpeed + t * speedRange;
             const speedMin = baseSpeed * (1 - speedVariation);
