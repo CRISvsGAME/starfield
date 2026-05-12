@@ -290,7 +290,10 @@ export class Starfield {
     };
 
     private animate = (): void => {
-        if (!this.isRunning) return;
+        if (!this.isRunning) {
+            this.frameId = null;
+            return;
+        }
 
         this.clear();
         this.renderStars();
@@ -303,6 +306,17 @@ export class Starfield {
 
         this.isRunning = true;
         this.frameId = requestAnimationFrame(this.animate);
+    };
+
+    public pause = (): void => {
+        if (!this.isRunning) return;
+
+        this.isRunning = false;
+
+        if (this.frameId !== null) {
+            cancelAnimationFrame(this.frameId);
+            this.frameId = null;
+        }
     };
 
     public destroy = (): void => {
