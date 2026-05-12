@@ -79,6 +79,8 @@ export class Starfield {
     private dpr: number = 0;
     private width: number = 0;
     private height: number = 0;
+    private frameId: number | null = null;
+    private isRunning: boolean = false;
     private sprites: Sprite[] = [];
     private stars: Star[] = [];
 
@@ -132,7 +134,6 @@ export class Starfield {
         }
 
         this.createStars();
-        this.renderStars();
     };
 
     private clear = (): void => {
@@ -286,6 +287,22 @@ export class Starfield {
             star.x = starX;
             star.y = starY;
         }
+    };
+
+    private animate = (): void => {
+        if (!this.isRunning) return;
+
+        this.clear();
+        this.renderStars();
+
+        this.frameId = requestAnimationFrame(this.animate);
+    };
+
+    public start = (): void => {
+        if (this.isRunning) return;
+
+        this.isRunning = true;
+        this.frameId = requestAnimationFrame(this.animate);
     };
 
     public destroy = (): void => {
