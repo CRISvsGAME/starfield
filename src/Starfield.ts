@@ -319,6 +319,15 @@ export class Starfield {
         }
     };
 
+    public reset = (): void => {
+        this.createStars();
+
+        if (!this.isRunning) {
+            this.clear();
+            this.renderStars();
+        }
+    };
+
     public stop = (): void => {
         this.pause();
         this.clear();
