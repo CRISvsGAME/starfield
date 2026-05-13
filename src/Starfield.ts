@@ -319,6 +319,11 @@ export class Starfield {
         }
     };
 
+    public stop = (): void => {
+        this.pause();
+        this.clear();
+    };
+
     public destroy = (): void => {
         this.rob.disconnect();
     };
