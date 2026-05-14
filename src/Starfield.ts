@@ -334,7 +334,10 @@ export class Starfield {
     };
 
     public destroy = (): void => {
+        this.stop();
         this.rob.disconnect();
+        this.sprites = [];
+        this.stars = [];
     };
 
     private validateOptions(options: StarfieldOptions): void {
