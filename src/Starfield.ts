@@ -48,6 +48,12 @@ type Star = {
     vy: number;
 };
 
+const STOPPED = 0;
+const RUNNING = 1;
+const PAUSED = 2;
+
+type StarfieldState = typeof STOPPED | typeof RUNNING | typeof PAUSED;
+
 const defaultStarfieldOptions: StarfieldOptions = {
     stars: 1000,
     sprites: 8,
@@ -80,7 +86,7 @@ export class Starfield {
     private width: number = 0;
     private height: number = 0;
     private frameId: number | null = null;
-    private isRunning: boolean = false;
+    private state: StarfieldState = STOPPED;
     private sprites: Sprite[] = [];
     private stars: Star[] = [];
 
@@ -102,7 +108,7 @@ export class Starfield {
         this.spriteCtx = spriteCtx;
         this.rob = new ResizeObserver(this.resize);
 
-        this.rob.observe(this.mainCvs);
+        this.rob.observe(cvs);
         this.resize();
     }
 
@@ -134,6 +140,11 @@ export class Starfield {
         }
 
         this.createStars();
+
+        if (this.state === PAUSED) {
+            this.clear();
+            this.renderStars();
+        }
     };
 
     private clear = (): void => {
@@ -290,7 +301,7 @@ export class Starfield {
     };
 
     private animate = (): void => {
-        if (!this.isRunning) {
+        if (this.state !== RUNNING) {
             this.frameId = null;
             return;
         }
@@ -302,16 +313,16 @@ export class Starfield {
     };
 
     public start = (): void => {
-        if (this.isRunning) return;
+        if (this.state === RUNNING) return;
 
-        this.isRunning = true;
+        this.state = RUNNING;
         this.frameId = requestAnimationFrame(this.animate);
     };
 
     public pause = (): void => {
-        if (!this.isRunning) return;
+        if (this.state !== RUNNING) return;
 
-        this.isRunning = false;
+        this.state = PAUSED;
 
         if (this.frameId !== null) {
             cancelAnimationFrame(this.frameId);
@@ -322,14 +333,19 @@ export class Starfield {
     public reset = (): void => {
         this.createStars();
 
-        if (!this.isRunning) {
+        if (this.state !== RUNNING) {
             this.clear();
             this.renderStars();
         }
     };
 
     public stop = (): void => {
-        this.pause();
+        if (this.frameId !== null) {
+            cancelAnimationFrame(this.frameId);
+            this.frameId = null;
+        }
+
+        this.state = STOPPED;
         this.clear();
     };
 
