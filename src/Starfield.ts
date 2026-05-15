@@ -51,11 +51,12 @@ type Star = {
 const STOPPED = 0;
 const RUNNING = 1;
 const PAUSED = 2;
+const MAX_DELTA_TIME = 50;
 
 type StarfieldState = typeof STOPPED | typeof RUNNING | typeof PAUSED;
 
 const defaultStarfieldOptions: StarfieldOptions = {
-    stars: 1000,
+    stars: 500,
     sprites: 8,
     spriteWidth: 32,
     spriteHeight: 32,
@@ -70,8 +71,8 @@ const defaultStarfieldOptions: StarfieldOptions = {
     minShadowBlur: 0,
     maxShadowBlur: 8,
     densityDecay: 1.5,
-    minSpeed: 0.1,
-    maxSpeed: 1,
+    minSpeed: 5,
+    maxSpeed: 10,
     speedVariation: 1,
 };
 
@@ -86,6 +87,7 @@ export class Starfield {
     private width: number = 0;
     private height: number = 0;
     private frameId: number | null = null;
+    private frameTime: number | null = null;
     private state: StarfieldState = STOPPED;
     private sprites: Sprite[] = [];
     private stars: Star[] = [];
@@ -110,6 +112,8 @@ export class Starfield {
 
         this.rob.observe(cvs);
         this.resize();
+
+        document.addEventListener("visibilitychange", this.visibilityChange);
     }
 
     private resize = (): void => {
@@ -143,8 +147,12 @@ export class Starfield {
 
         if (this.state === PAUSED) {
             this.clear();
-            this.renderStars();
+            this.renderStars(0);
         }
+    };
+
+    private visibilityChange = (): void => {
+        this.frameTime = null;
     };
 
     private clear = (): void => {
@@ -271,7 +279,7 @@ export class Starfield {
         this.stars = starsList;
     };
 
-    private renderStars = (): void => {
+    private renderStars = (deltaTime: number): void => {
         const mainCtx = this.mainCtx;
         const spriteCvs = this.spriteCvs;
         const stars = this.stars;
@@ -279,6 +287,7 @@ export class Starfield {
         const canvasWidth = this.width;
         const canvasHeight = this.height;
         const length = stars.length;
+        const delta = deltaTime / 1000;
 
         for (let i = 0; i < length; i++) {
             const star = stars[i]!;
@@ -287,8 +296,8 @@ export class Starfield {
 
             mainCtx.drawImage(spriteCvs, sprite.sx, sprite.sy, sprite.sw, sprite.sh, x, y, width, height);
 
-            let starX = x + vx;
-            let starY = y + vy;
+            let starX = x + vx * delta;
+            let starY = y + vy * delta;
 
             if (starX < -width) starX = canvasWidth;
             else if (starX > canvasWidth) starX = -width;
@@ -300,15 +309,20 @@ export class Starfield {
         }
     };
 
-    private animate = (): void => {
+    private animate = (time: number): void => {
         if (this.state !== RUNNING) {
             this.frameId = null;
+            this.frameTime = null;
             return;
         }
 
-        this.clear();
-        this.renderStars();
+        const frameTime = this.frameTime ?? time;
+        const deltaTime = Math.min(time - frameTime, MAX_DELTA_TIME);
 
+        this.clear();
+        this.renderStars(deltaTime);
+
+        this.frameTime = time;
         this.frameId = requestAnimationFrame(this.animate);
     };
 
@@ -316,6 +330,7 @@ export class Starfield {
         if (this.state === RUNNING) return;
 
         this.state = RUNNING;
+        this.frameTime = null;
         this.frameId = requestAnimationFrame(this.animate);
     };
 
@@ -323,6 +338,7 @@ export class Starfield {
         if (this.state !== RUNNING) return;
 
         this.state = PAUSED;
+        this.frameTime = null;
 
         if (this.frameId !== null) {
             cancelAnimationFrame(this.frameId);
@@ -334,8 +350,9 @@ export class Starfield {
         this.createStars();
 
         if (this.state !== RUNNING) {
+            this.state = PAUSED;
             this.clear();
-            this.renderStars();
+            this.renderStars(0);
         }
     };
 
@@ -346,6 +363,7 @@ export class Starfield {
         }
 
         this.state = STOPPED;
+        this.frameTime = null;
         this.clear();
     };
 
@@ -354,6 +372,8 @@ export class Starfield {
         this.rob.disconnect();
         this.sprites = [];
         this.stars = [];
+
+        document.removeEventListener("visibilitychange", this.visibilityChange);
     };
 
     private validateOptions(options: StarfieldOptions): void {
