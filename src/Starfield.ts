@@ -1,4 +1,4 @@
-type StarfieldOptions = {
+export type StarfieldOptions = {
     stars: number;
     sprites: number;
     spriteWidth: number;
@@ -365,6 +365,37 @@ export class Starfield {
         this.state = STOPPED;
         this.frameTime = null;
         this.clear();
+    };
+
+    public setProperties = (properties: Partial<StarfieldOptions>): void => {
+        const c = this.options;
+        const p = properties;
+        const n = { ...c, ...p };
+
+        this.validateOptions(n);
+
+        const spritesChanged = (p.sprites !== undefined && p.sprites !== c.sprites) || (p.spriteWidth !== undefined && p.spriteWidth !== c.spriteWidth) || (p.spriteHeight !== undefined && p.spriteHeight !== c.spriteHeight);
+
+        const bitmapChanged = spritesChanged || (p.minOuterRadius !== undefined && p.minOuterRadius !== c.minOuterRadius) || (p.maxOuterRadius !== undefined && p.maxOuterRadius !== c.maxOuterRadius) || (p.innerRadiusRatio !== undefined && p.innerRadiusRatio !== c.innerRadiusRatio) || (p.points !== undefined && p.points !== c.points) || (p.color !== undefined && p.color !== c.color) || (p.minAlpha !== undefined && p.minAlpha !== c.minAlpha) || (p.maxAlpha !== undefined && p.maxAlpha !== c.maxAlpha) || (p.shadowColor !== undefined && p.shadowColor !== c.shadowColor) || (p.minShadowBlur !== undefined && p.minShadowBlur !== c.minShadowBlur) || (p.maxShadowBlur !== undefined && p.maxShadowBlur !== c.maxShadowBlur);
+
+        const starsChanged = spritesChanged || (p.stars !== undefined && p.stars !== c.stars) || (p.densityDecay !== undefined && p.densityDecay !== c.densityDecay) || (p.minSpeed !== undefined && p.minSpeed !== c.minSpeed) || (p.maxSpeed !== undefined && p.maxSpeed !== c.maxSpeed) || (p.speedVariation !== undefined && p.speedVariation !== c.speedVariation);
+
+        if (!bitmapChanged && !starsChanged) return;
+
+        this.options = n;
+
+        if (bitmapChanged) {
+            this.createSpriteMap();
+        }
+
+        if (starsChanged) {
+            this.createStars();
+        }
+
+        if (this.state === PAUSED) {
+            this.clear();
+            this.renderStars(0);
+        }
     };
 
     public destroy = (): void => {
