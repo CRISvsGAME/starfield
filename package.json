@@ -1,6 +1,6 @@
 {
     "name": "@crisvsgame/starfield",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "A lightweight starfield animation and rendering engine",
     "keywords": [
         "canvas",
@@ -24,8 +24,15 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js"
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
     },
+    "files": [
+        "dist",
+        "LICENSE"
+    ],
     "scripts": {
         "build": "tsc",
         "dev": "tsc --watch"
