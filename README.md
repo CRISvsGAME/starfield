@@ -9,6 +9,14 @@ and runtime property updates.
 
 ---
 
+## 🌌 Live Demo
+
+Try Starfield in the browser:
+
+https://crisvsgame.github.io/starfield/
+
+---
+
 ## 📦 Installation
 
 Install from npm:
@@ -164,5 +172,6 @@ MIT License
 
 ## 🔗 Links
 
+- Demo: https://crisvsgame.github.io/starfield/
 - npm: https://www.npmjs.com/package/@crisvsgame/starfield
 - Source Code: https://github.com/CRISvsGAME/starfield
