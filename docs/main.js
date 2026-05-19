@@ -6,5 +6,7 @@ if (!(cvs instanceof HTMLCanvasElement)) {
     throw new Error("Canvas element not found");
 }
 
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
 const starfield = new Starfield(cvs);
 starfield.start();
