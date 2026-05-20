@@ -8,13 +8,13 @@ if (!(cvs instanceof HTMLCanvasElement)) {
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-const randomRgb = () => {
-    return {
-        r: randomInt(0, 255),
-        g: randomInt(0, 255),
-        b: randomInt(0, 255),
-    };
-};
+const randomRgb = () => ({
+    r: randomInt(0, 255),
+    g: randomInt(0, 255),
+    b: randomInt(0, 255),
+});
+
+const rgbToCss = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
 const starfield = new Starfield(cvs);
 starfield.start();
