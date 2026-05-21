@@ -16,5 +16,10 @@ const randomRgb = () => ({
 
 const rgbToCss = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
+const backgroundRgb = randomRgb();
+const backgroundColor = rgbToCss(backgroundRgb);
+
+document.body.style.backgroundColor = backgroundColor;
+
 const starfield = new Starfield(cvs);
 starfield.start();
