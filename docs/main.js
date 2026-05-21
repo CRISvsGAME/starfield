@@ -16,6 +16,12 @@ const randomRgb = () => ({
 
 const rgbToCss = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
+const rgbChannelToLinear = (channel) => {
+    const normalized = channel / 255;
+
+    return normalized <= 0.04045 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+};
+
 const backgroundRgb = randomRgb();
 const backgroundColor = rgbToCss(backgroundRgb);
 
