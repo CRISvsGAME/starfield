@@ -26,6 +26,8 @@ const relativeLuminance = ({ r, g, b }) => {
     return 0.2126 * rgbToLinear(r) + 0.7152 * rgbToLinear(g) + 0.0722 * rgbToLinear(b);
 };
 
+const isDarkColor = (luminance) => luminance < 0.5;
+
 const backgroundRgb = randomRgb();
 const backgroundColor = rgbToCss(backgroundRgb);
 
