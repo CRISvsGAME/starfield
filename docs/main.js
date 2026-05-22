@@ -16,10 +16,14 @@ const randomRgb = () => ({
 
 const rgbToCss = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
-const rgbChannelToLinear = (channel) => {
+const rgbToLinear = (channel) => {
     const normalized = channel / 255;
 
     return normalized <= 0.04045 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+};
+
+const relativeLuminance = ({ r, g, b }) => {
+    return 0.2126 * rgbToLinear(r) + 0.7152 * rgbToLinear(g) + 0.0722 * rgbToLinear(b);
 };
 
 const backgroundRgb = randomRgb();
