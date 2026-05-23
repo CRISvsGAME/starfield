@@ -42,8 +42,16 @@ const constrastRgb = (isDark) => {
 
 const backgroundRgb = randomRgb();
 const backgroundColor = rgbToCss(backgroundRgb);
+const backgroundLuminance = relativeLuminance(backgroundRgb);
+const backgroundIsDark = isDarkColor(backgroundLuminance);
+const starRgb = constrastRgb(backgroundIsDark);
+const starColor = rgbToCss(starRgb);
 
 document.body.style.backgroundColor = backgroundColor;
+document.body.style.color = starColor;
 
-const starfield = new Starfield(cvs);
+const starfield = new Starfield(cvs, {
+    color: starColor,
+    shadowColor: starColor,
+});
 starfield.start();
