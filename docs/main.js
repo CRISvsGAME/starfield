@@ -54,8 +54,34 @@ const starColor = rgbToCss(starRgb);
 document.body.style.backgroundColor = backgroundColor;
 document.body.style.color = starColor;
 
-const starfield = new Starfield(cvs, {
-    color: starColor,
-    shadowColor: starColor,
-});
+const randomStarfieldOptions = () => {
+    const size = randomInt(2, 32) * 8;
+    const radius = size / 4;
+    const alpha = randomFloat(0.8, 1);
+    const shadow = radius * 0.8;
+    const speed = randomInt(10, 1000);
+
+    return {
+        stars: randomInt(2, 1000),
+        sprites: randomInt(2, 32),
+        spriteWidth: size,
+        spriteHeight: size,
+        minOuterRadius: radius / 2,
+        maxOuterRadius: radius,
+        innerRadiusRatio: randomFloat(0.1, 0.9),
+        points: randomInt(3, 32),
+        color: starColor,
+        minAlpha: alpha / 4,
+        maxAlpha: alpha,
+        shadowColor: starColor,
+        minShadowBlur: randomFloat(0, shadow / 2),
+        maxShadowBlur: shadow,
+        densityDecay: randomFloat(1.1, 2.9),
+        minSpeed: speed / 4,
+        maxSpeed: speed,
+        speedVariation: randomFloat(0.1, 1),
+    };
+};
+
+const starfield = new Starfield(cvs, randomStarfieldOptions());
 starfield.start();
