@@ -50,9 +50,16 @@ const backgroundLuminance = relativeLuminance(backgroundRgb);
 const backgroundIsDark = isDarkColor(backgroundLuminance);
 const starRgb = constrastRgb(backgroundIsDark);
 const starColor = rgbToCss(starRgb);
+const shadowRgb = constrastRgb(!backgroundIsDark);
+const shadowColor = rgbToCss(shadowRgb);
 
 document.body.style.backgroundColor = backgroundColor;
 document.body.style.color = starColor;
+document.body.style.textShadow = `
+    0 0 4px ${shadowColor},
+    0 0 12px ${shadowColor},
+    0 0 36px ${shadowColor}
+`;
 
 const randomStarfieldOptions = () => {
     const size = randomInt(2, 32) * 8;
