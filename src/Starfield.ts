@@ -203,12 +203,12 @@ export class Starfield {
         const radiusRange = maxOuterRadius - minOuterRadius;
         const alphaRange = maxAlpha - minAlpha;
         const blurRange = maxShadowBlur - minShadowBlur;
-        const spriteWidthDpr = Math.round(spriteWidth * dpr);
-        const spriteHeightDpr = Math.round(spriteHeight * dpr);
+        const spriteWidthDpr = spriteWidth * dpr;
+        const spriteHeightDpr = spriteHeight * dpr;
         const spritesList: Sprite[] = [];
 
-        spriteCvs.width = spriteWidthDpr * sprites;
-        spriteCvs.height = spriteHeightDpr;
+        spriteCvs.width = Math.ceil(spriteWidthDpr * sprites);
+        spriteCvs.height = Math.ceil(spriteHeightDpr);
 
         spriteCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
