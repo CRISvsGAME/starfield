@@ -243,6 +243,8 @@ export class Starfield {
         const spritesMinusOne = sprites - 1;
         const tStep = sprites === 1 ? 0 : 1 / spritesMinusOne;
         const speedRange = maxSpeed - minSpeed;
+        const spawnX = width + spriteWidth;
+        const spawnY = height + spriteHeight;
         const doublePi = 2 * Math.PI;
         const starsList: Star[] = [];
         const weights: number[] = [];
@@ -265,8 +267,8 @@ export class Starfield {
             const speedRangeForIndex = speedMax - speedMin;
 
             for (let i = 0; i < count; i++) {
-                const x = Math.random() * width;
-                const y = Math.random() * height;
+                const x = Math.random() * spawnX - spriteWidth;
+                const y = Math.random() * spawnY - spriteHeight;
                 const angle = Math.random() * doublePi;
                 const speed = speedMin + Math.random() * speedRangeForIndex;
                 const vx = speed * Math.cos(angle);
