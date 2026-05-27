@@ -79,6 +79,28 @@ starfield.start();
 
 ---
 
+## 🌐 CDN / Browser ESM
+
+Starfield can also be imported directly in the browser through jsDelivr:
+
+```html
+<script type="module">
+    import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield/dist/index.js";
+
+    const cvs = document.getElementById("starfield");
+
+    if (!(cvs instanceof HTMLCanvasElement)) {
+        throw new Error("Canvas element not found");
+    }
+
+    const starfield = new Starfield(cvs);
+
+    starfield.start();
+</script>
+```
+
+---
+
 ## 🔧 Features
 
 ### Canvas Rendering
@@ -172,6 +194,8 @@ MIT License
 
 ## 🔗 Links
 
-- Demo: https://crisvsgame.github.io/starfield/
 - npm: https://www.npmjs.com/package/@crisvsgame/starfield
 - Source Code: https://github.com/CRISvsGAME/starfield
+- Demo: https://crisvsgame.github.io/starfield/
+
+The demo randomises the starfield on each visit, so every refresh shows a slightly different version.
