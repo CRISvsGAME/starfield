@@ -1,4 +1,4 @@
-import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield/dist/index.js";
+import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield@1.1.0/dist/index.min.js";
 
 const cvs = document.getElementById("starfield");
 
