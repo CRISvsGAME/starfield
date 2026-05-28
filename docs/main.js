@@ -71,10 +71,10 @@ const randomStarfieldOptions = () => {
     const radius = size / 4;
     const alpha = randomFloat(0.8, 1);
     const shadow = radius * 0.8;
-    const speed = randomInt(10, 1000);
+    const speed = randomInt(10, 500);
 
     return {
-        stars: randomInt(2, 1000),
+        stars: randomInt(2, 500),
         sprites: sprites,
         spriteWidth: size,
         spriteHeight: size,
