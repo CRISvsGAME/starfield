@@ -44,25 +44,25 @@ const contrastRgb = (isDark) => {
     return isDark ? { r: 255, g: 255, b: 255 } : { r: 0, g: 0, b: 0 };
 };
 
-const backgroundRgb = randomRgb();
-const backgroundColor = rgbToCss(backgroundRgb);
-const backgroundLuminance = relativeLuminance(backgroundRgb);
-const backgroundIsDark = isDarkColor(backgroundLuminance);
-const starRgb = contrastRgb(backgroundIsDark);
-const starColor = rgbToCss(starRgb);
-const shadowRgb = contrastRgb(!backgroundIsDark);
-const shadowColor = rgbToCss(shadowRgb);
-
-document.body.style.backgroundColor = backgroundColor;
-document.body.style.color = starColor;
-document.body.style.textShadow = `
-    0 0 4px ${shadowColor},
-    0 0 8px ${shadowColor},
-    0 0 16px ${shadowColor},
-    0 0 32px ${shadowColor}
-`;
-
 const randomStarfieldOptions = () => {
+    const backgroundRgb = randomRgb();
+    const backgroundColor = rgbToCss(backgroundRgb);
+    const backgroundLuminance = relativeLuminance(backgroundRgb);
+    const backgroundIsDark = isDarkColor(backgroundLuminance);
+    const starRgb = contrastRgb(backgroundIsDark);
+    const starColor = rgbToCss(starRgb);
+    const shadowRgb = contrastRgb(!backgroundIsDark);
+    const shadowColor = rgbToCss(shadowRgb);
+
+    document.body.style.backgroundColor = backgroundColor;
+    document.body.style.color = starColor;
+    document.body.style.textShadow = `
+        0 0 4px ${shadowColor},
+        0 0 8px ${shadowColor},
+        0 0 16px ${shadowColor},
+        0 0 32px ${shadowColor}
+    `;
+
     const maxSpriteMap = 8192;
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const size = randomInt(2, 32) * 8;
@@ -71,10 +71,10 @@ const randomStarfieldOptions = () => {
     const radius = size / 4;
     const alpha = randomFloat(0.8, 1);
     const shadow = radius * 0.8;
-    const speed = randomInt(10, 500);
+    const speed = randomInt(10, 250);
 
     return {
-        stars: randomInt(2, 500),
+        stars: randomInt(2, 250),
         sprites: sprites,
         spriteWidth: size,
         spriteHeight: size,
@@ -97,3 +97,8 @@ const randomStarfieldOptions = () => {
 
 const starfield = new Starfield(cvs, randomStarfieldOptions());
 starfield.start();
+
+setInterval(() => {
+    const starfieldOptions = randomStarfieldOptions();
+    starfield.setProperties(starfieldOptions);
+}, 5_000);

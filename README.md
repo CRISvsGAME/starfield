@@ -198,4 +198,4 @@ MIT License
 - Source Code: https://github.com/CRISvsGAME/starfield
 - Demo: https://crisvsgame.github.io/starfield/
 
-The demo randomises the starfield on each visit, so every refresh shows a slightly different version.
+The demo randomises the starfield every five seconds, showing a slightly different version.
