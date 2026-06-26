@@ -17,7 +17,16 @@ export type StarfieldOptions = {
     minSpeed: number;
     maxSpeed: number;
     speedVariation: number;
+    onFrame?: OnFrameCallback;
 };
+
+export type StarfieldFrame = {
+    time: number;
+    deltaTime: number;
+    elapsedTime: number;
+}
+
+export type OnFrameCallback = (frame: StarfieldFrame) => void;
 
 type StarOptions = {
     ctx?: CanvasRenderingContext2D;
@@ -48,12 +57,12 @@ type Star = {
     vy: number;
 };
 
+type StarfieldState = typeof STOPPED | typeof RUNNING | typeof PAUSED;
+
 const STOPPED = 0;
 const RUNNING = 1;
 const PAUSED = 2;
 const MAX_DELTA_TIME = 50;
-
-type StarfieldState = typeof STOPPED | typeof RUNNING | typeof PAUSED;
 
 const defaultStarfieldOptions: StarfieldOptions = {
     stars: 500,
@@ -450,5 +459,6 @@ export class Starfield {
         if (o.speedVariation < 0 || o.speedVariation > 1) throw new Error("Speed variation must be between 0 and 1");
         if (typeof o.color !== "string" || o.color.length === 0) throw new Error("Color must be a non-empty string");
         if (typeof o.shadowColor !== "string" || o.shadowColor.length === 0) throw new Error("Shadow color must be a non-empty string");
+        if (o.onFrame !== undefined && typeof o.onFrame !== "function") throw new Error("onFrame must be a function");
     }
 }
