@@ -24,7 +24,7 @@ export type StarfieldFrame = {
     time: number;
     deltaTime: number;
     elapsedTime: number;
-}
+};
 
 export type OnFrameCallback = (frame: StarfieldFrame) => void;
 
@@ -100,6 +100,7 @@ export class Starfield {
     private state: StarfieldState = STOPPED;
     private sprites: Sprite[] = [];
     private stars: Star[] = [];
+    private elapsedTime: number = 0;
 
     constructor(cvs: HTMLCanvasElement, options: Partial<StarfieldOptions> = {}) {
         const mainCtx = cvs.getContext("2d");
@@ -329,6 +330,13 @@ export class Starfield {
 
         const frameTime = this.frameTime ?? time;
         const deltaTime = Math.min(time - frameTime, MAX_DELTA_TIME);
+        const onFrame = this.options.onFrame;
+
+        this.elapsedTime += deltaTime;
+
+        if (onFrame) {
+            onFrame({ time, deltaTime, elapsedTime: this.elapsedTime });
+        }
 
         this.clear();
         this.renderStars(deltaTime);
