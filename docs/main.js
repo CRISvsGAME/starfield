@@ -1,5 +1,5 @@
-import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield@1.1.0/dist/index.min.js";
-import { Chroma } from "https://cdn.jsdelivr.net/npm/@crisvsgame/chroma@1.0.0/dist/index.min.js";
+import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield@1.2.0/dist/index.min.js";
+import { Chroma } from "https://cdn.jsdelivr.net/npm/@crisvsgame/chroma@1.1.0/dist/index.min.js";
 
 const cvs = document.getElementById("starfield");
 
@@ -60,10 +60,17 @@ const randomStarfieldOptions = () => {
     };
 };
 
-const starfield = new Starfield(cvs, randomStarfieldOptions());
-starfield.start();
+const randomisationTime = 5000;
+let nextRandomisation = randomisationTime;
 
-setInterval(() => {
-    const starfieldOptions = randomStarfieldOptions();
-    starfield.setProperties(starfieldOptions);
-}, 5_000);
+const starfield = new Starfield(cvs, {
+    ...randomStarfieldOptions(),
+    onFrame: ({ elapsedTime }) => {
+        if (elapsedTime >= nextRandomisation) {
+            starfield.setProperties(randomStarfieldOptions());
+            nextRandomisation += randomisationTime;
+        }
+    },
+});
+
+starfield.start();

@@ -85,7 +85,7 @@ Starfield can also be imported directly in the browser through jsDelivr:
 
 ```html
 <script type="module">
-    import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield@1.1.0/dist/index.min.js";
+    import { Starfield } from "https://cdn.jsdelivr.net/npm/@crisvsgame/starfield@1.2.0/dist/index.js";
 
     const cvs = document.getElementById("starfield");
 
@@ -110,6 +110,7 @@ Starfield can also be imported directly in the browser through jsDelivr:
 - Canvas resize handling
 - Delta-time animation
 - Tab inactivity protection
+- Frame-synchronised callbacks
 
 ### Starfield Controls
 
@@ -130,7 +131,9 @@ Starfield can also be imported directly in the browser through jsDelivr:
 ### Fully Typed
 
 ```typescript
-import { Starfield, type StarfieldOptions } from "@crisvsgame/starfield";
+import { Starfield, VERSION, type StarfieldOptions, type StarfieldFrame, type OnFrameCallback } from "@crisvsgame/starfield";
+
+console.log(VERSION);
 ```
 
 ---
@@ -166,12 +169,60 @@ data.
 
 ---
 
+## ⏱️ Frame Callback
+
+Use `onFrame` to synchronise external updates with Starfield's animation loop.
+
+```typescript
+const callbackInterval = 5000;
+let nextCallback = callbackInterval;
+
+const starfield = new Starfield(cvs, {
+    onFrame: (frame) => {
+        if (frame.elapsedTime >= nextCallback) {
+            console.log(frame);
+            nextCallback += callbackInterval;
+        }
+    },
+});
+
+starfield.start();
+```
+
+The callback receives:
+
+```typescript
+type StarfieldFrame = {
+    time: number;
+    deltaTime: number;
+    elapsedTime: number;
+};
+```
+
+`elapsedTime` tracks active animation time, excluding time spent in inactive browser tabs.
+
+---
+
 ## 📂 Project Structure
 
 ```bash
 src/
     index.ts
     Starfield.ts
+dist/ # generated build output published to npm
+    index.d.ts
+    index.d.ts.map
+    index.js
+    index.js.map
+    Starfield.d.ts
+    Starfield.js
+    Starfield.js.map
+.gitignore
+LICENSE
+README.md
+package-lock.json
+package.json
+tsconfig.json
 ```
 
 ---
@@ -198,4 +249,4 @@ MIT License
 - Source Code: https://github.com/CRISvsGAME/starfield
 - Demo: https://crisvsgame.github.io/starfield/
 
-The demo randomises the starfield every five seconds, showing a slightly different version.
+The demo randomises the starfield every five seconds of active animation time, showing a slightly different version.
