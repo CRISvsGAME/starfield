@@ -15,6 +15,8 @@ Try Starfield in the browser:
 
 https://crisvsgame.github.io/starfield/
 
+The demo uses Starfield to render the animated canvas background. It randomises the starfield every five seconds of active animation time, showing different star shapes, speeds, colours, density, opacity, and glow effects.
+
 ---
 
 ## 📦 Installation
@@ -248,5 +250,3 @@ MIT License
 - npm: https://www.npmjs.com/package/@crisvsgame/starfield
 - Source Code: https://github.com/CRISvsGAME/starfield
 - Demo: https://crisvsgame.github.io/starfield/
-
-The demo randomises the starfield every five seconds of active animation time, showing a slightly different version.
