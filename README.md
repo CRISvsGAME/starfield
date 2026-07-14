@@ -1,6 +1,6 @@
 # Starfield
 
-## Starfield - Lightweight Canvas Star Animation Library
+## Lightweight Canvas Star Animation Library
 
 Starfield is a lightweight, fully typed TypeScript library for rendering
 animated starfield effects on an HTML canvas. It uses a cached sprite map,

@@ -108,7 +108,7 @@ try {
         throw new Error("Typewriter is not available.");
     }
 
-    const typewriter = new Typewriter({ holdAfterWrite: 5000, holdAfterDelete: 2000 });
+    const typewriter = new Typewriter({ holdAfterWrite: 5000, holdAfterDelete: 2000, texts: ["Welcome to Starfield!", "Enjoy the cosmic journey.", "Feel the infinite space."] });
 
     typewriter.start();
 } catch (error) {
