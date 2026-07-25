@@ -1,3 +1,7 @@
+import { StarfieldState } from "./StarfieldState.js";
+import { StarfieldCadence } from "./StarfieldCadence.js";
+import { Cadence } from "@crisvsgame/cadence";
+
 export type StarfieldOptions = {
     stars: number;
     sprites: number;
@@ -57,11 +61,6 @@ type Star = {
     vy: number;
 };
 
-type StarfieldState = typeof STOPPED | typeof RUNNING | typeof PAUSED;
-
-const STOPPED = 0;
-const RUNNING = 1;
-const PAUSED = 2;
 const MAX_DELTA_TIME = 50;
 
 const defaultStarfieldOptions: StarfieldOptions = {
@@ -86,6 +85,19 @@ const defaultStarfieldOptions: StarfieldOptions = {
 };
 
 export class Starfield {
+    #state: StarfieldState = StarfieldState.STOPPED;
+    #starfieldCadence: StarfieldCadence;
+
+    public constructor(cadence?: Cadence) {
+        this.#starfieldCadence = new StarfieldCadence(cadence);
+    }
+
+    public get state(): StarfieldState {
+        return this.#state;
+    }
+}
+
+export class StarfieldBack {
     private options: StarfieldOptions;
     private mainCvs: HTMLCanvasElement;
     private mainCtx: CanvasRenderingContext2D;
@@ -97,7 +109,7 @@ export class Starfield {
     private height: number = 0;
     private frameId: number | null = null;
     private frameTime: number | null = null;
-    private state: StarfieldState = STOPPED;
+    private state: StarfieldState = StarfieldState.STOPPED;
     private sprites: Sprite[] = [];
     private stars: Star[] = [];
     private elapsedTime: number = 0;
@@ -155,7 +167,7 @@ export class Starfield {
 
         this.createStars();
 
-        if (this.state === PAUSED) {
+        if (this.state === StarfieldState.PAUSED) {
             this.clear();
             this.renderStars(0);
         }
@@ -322,7 +334,7 @@ export class Starfield {
     };
 
     private animate = (time: number): void => {
-        if (this.state !== RUNNING) {
+        if (this.state !== StarfieldState.RUNNING) {
             this.frameId = null;
             this.frameTime = null;
             return;
@@ -346,17 +358,17 @@ export class Starfield {
     };
 
     public start = (): void => {
-        if (this.state === RUNNING) return;
+        if (this.state === StarfieldState.RUNNING) return;
 
-        this.state = RUNNING;
+        this.state = StarfieldState.RUNNING;
         this.frameTime = null;
         this.frameId = requestAnimationFrame(this.animate);
     };
 
     public pause = (): void => {
-        if (this.state !== RUNNING) return;
+        if (this.state !== StarfieldState.RUNNING) return;
 
-        this.state = PAUSED;
+        this.state = StarfieldState.PAUSED;
         this.frameTime = null;
 
         if (this.frameId !== null) {
@@ -368,8 +380,8 @@ export class Starfield {
     public reset = (): void => {
         this.createStars();
 
-        if (this.state !== RUNNING) {
-            this.state = PAUSED;
+        if (this.state !== StarfieldState.RUNNING) {
+            this.state = StarfieldState.PAUSED;
             this.clear();
             this.renderStars(0);
         }
@@ -381,7 +393,7 @@ export class Starfield {
             this.frameId = null;
         }
 
-        this.state = STOPPED;
+        this.state = StarfieldState.STOPPED;
         this.frameTime = null;
         this.clear();
     };
@@ -411,7 +423,7 @@ export class Starfield {
             this.createStars();
         }
 
-        if (this.state === PAUSED) {
+        if (this.state === StarfieldState.PAUSED) {
             this.clear();
             this.renderStars(0);
         }

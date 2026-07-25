@@ -35,9 +35,14 @@
     ],
     "scripts": {
         "build": "tsc",
-        "dev": "tsc --watch"
+        "dev": "tsc --watch",
+        "test": "tsc --project tsconfig.test.json && vitest run"
     },
     "devDependencies": {
-        "typescript": "^7.0.2"
+        "typescript": "^7.0.2",
+        "vitest": "^4.1.10"
+    },
+    "dependencies": {
+        "@crisvsgame/cadence": "^1.0.0"
     }
 }
