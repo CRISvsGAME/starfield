@@ -95,6 +95,46 @@ export class Starfield {
     public get state(): StarfieldState {
         return this.#state;
     }
+
+    public stop(): void {
+        const state = this.#state;
+
+        if (state !== StarfieldState.RUNNING && state !== StarfieldState.PAUSED) {
+            return;
+        }
+
+        this.#state = StarfieldState.STOPPED;
+    }
+
+    public start(): void {
+        const state = this.#state;
+
+        if (state === StarfieldState.DESTROYED) {
+            throw new Error("Starfield: Cannot start a destroyed instance.");
+        }
+
+        if (state === StarfieldState.RUNNING) {
+            return;
+        }
+
+        this.#state = StarfieldState.RUNNING;
+    }
+
+    public pause(): void {
+        if (this.#state !== StarfieldState.RUNNING) {
+            return;
+        }
+
+        this.#state = StarfieldState.PAUSED;
+    }
+
+    public destroy(): void {
+        if (this.#state === StarfieldState.DESTROYED) {
+            return;
+        }
+
+        this.#state = StarfieldState.DESTROYED;
+    }
 }
 
 export class StarfieldBack {
