@@ -1,6 +1,7 @@
 import { StarfieldState } from "./StarfieldState.js";
 import { StarfieldCadence } from "./StarfieldCadence.js";
 import { Cadence } from "@crisvsgame/cadence";
+import type { CadenceFrame } from "@crisvsgame/cadence";
 
 export type StarfieldOptions = {
     stars: number;
@@ -88,8 +89,12 @@ export class Starfield {
     #state: StarfieldState = StarfieldState.STOPPED;
     #starfieldCadence: StarfieldCadence;
 
+    #onAnimationFrame = (frame: CadenceFrame): void => {
+        console.log(frame);
+    };
+
     public constructor(cadence?: Cadence) {
-        this.#starfieldCadence = new StarfieldCadence(cadence);
+        this.#starfieldCadence = new StarfieldCadence(this.#onAnimationFrame, cadence);
     }
 
     public get state(): StarfieldState {
@@ -101,6 +106,10 @@ export class Starfield {
 
         if (state !== StarfieldState.RUNNING && state !== StarfieldState.PAUSED) {
             return;
+        }
+
+        if (state === StarfieldState.RUNNING) {
+            this.#starfieldCadence.unsubscribe();
         }
 
         this.#state = StarfieldState.STOPPED;
@@ -117,6 +126,7 @@ export class Starfield {
             return;
         }
 
+        this.#starfieldCadence.subscribe();
         this.#state = StarfieldState.RUNNING;
     }
 
@@ -125,12 +135,17 @@ export class Starfield {
             return;
         }
 
+        this.#starfieldCadence.unsubscribe();
         this.#state = StarfieldState.PAUSED;
     }
 
     public destroy(): void {
         if (this.#state === StarfieldState.DESTROYED) {
             return;
+        }
+
+        if (this.#state === StarfieldState.RUNNING) {
+            this.#starfieldCadence.unsubscribe();
         }
 
         this.#state = StarfieldState.DESTROYED;
