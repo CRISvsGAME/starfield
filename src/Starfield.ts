@@ -89,9 +89,7 @@ export class Starfield {
     #state: StarfieldState = StarfieldState.STOPPED;
     #starfieldCadence: StarfieldCadence;
 
-    #onAnimationFrame = (frame: CadenceFrame): void => {
-        console.log(frame);
-    };
+    #onAnimationFrame = (_frame: CadenceFrame): void => {};
 
     public constructor(cadence?: Cadence) {
         this.#starfieldCadence = new StarfieldCadence(this.#onAnimationFrame, cadence);
